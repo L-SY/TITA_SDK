@@ -40,7 +40,7 @@ public:
    *
    * \returns \c true if it successfully open and bind socket.
    */
-  bool open(const std::string& interface, boost::function<void(const can_frame& frame)> handler, int thread_priority);
+  bool open(const std::string& interface, boost::function<void(const canfd_frame& frame)> handler, int thread_priority);
   /** \brief Close and unbind socket.
    *
    */
@@ -65,6 +65,6 @@ public:
    * Pointer to a function which shall be called
    * when frames are being received from the CAN bus
    */
-  boost::function<void(const can_frame& frame)> reception_handler;
+  boost::function<void(const canfd_frame& frame)> reception_handler;
 };
 }  // namespace tita_hw

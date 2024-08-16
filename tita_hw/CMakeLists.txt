@@ -13,6 +13,10 @@ set(CATKIN_PACKAGE_DEPENDENCIES
         imu_filter_madgwick
 )
 
+find_package(Boost REQUIRED COMPONENTS
+        system
+        filesystem
+)
 find_package(catkin REQUIRED COMPONENTS
         ${CATKIN_PACKAGE_DEPENDENCIES}
 )
@@ -23,6 +27,7 @@ catkin_package(
         CATKIN_DEPENDS
         ${CATKIN_PACKAGE_DEPENDENCIES}
         DEPENDS
+        Boost
 )
 
 include_directories(

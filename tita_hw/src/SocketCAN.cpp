@@ -22,7 +22,7 @@ SocketCAN::~SocketCAN()
     this->close();
 }
 
-bool SocketCAN::open(const std::string& interface, boost::function<void(const can_frame& frame)> handler,
+bool SocketCAN::open(const std::string& interface, boost::function<void(const canfd_frame& frame)> handler,
                      int thread_priority)
 {
   reception_handler = std::move(handler);
@@ -114,7 +114,7 @@ static void* socketcan_receiver_thread(void* argv)
   {
   };
   // Buffer to store incoming frame
-  can_frame rx_frame{};
+  canfd_frame rx_frame{};
   // Run until termination signal received
   sock->receiver_thread_running_ = true;
   while (!sock->terminate_receiver_thread_)
