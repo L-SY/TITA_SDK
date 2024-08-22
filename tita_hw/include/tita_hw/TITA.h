@@ -41,15 +41,9 @@ public:
   Motor(const std::string& name, uint32_t timestamp = 0, float position = 0.0, float kp = 0.0, float velocity = 0.0,
         float kd = 0.0, float torque = 0.0)
     : Peripheral(name), timestamp(timestamp), position(position), kp(kp), velocity(velocity), kd(kd), torque(torque)
-  {
-  }
+  {}
 
-  void read(std::vector<canfd_frame> read_buffer) override
-  {
-    std::cout << "Reading data from Motor: " << name << std::endl;
-    std::cout << "Timestamp: " << timestamp << ", Position: " << position << ", KP: " << kp
-              << ", Velocity: " << velocity << ", KD: " << kd << ", Torque: " << torque << std::endl;
-  }
+  void read(std::vector<canfd_frame> read_buffer) override;
 };
 
 class IMU : public Peripheral
@@ -64,18 +58,9 @@ public:
       const std::vector<double>& gyro = { 0.0, 0.0, 0.0 },
       const std::vector<double>& quaternion = { 0.0, 0.0, 0.0, 0.0 })
     : Peripheral(name), timestamp(timestamp), accel(accel), gyro(gyro), quaternion(quaternion)
-  {
-  }
+  {}
 
-  void read(std::vector<canfd_frame> read_buffer) override
-  {
-    std::cout << "Reading data from IMU: " << name << std::endl;
-    std::cout << "Timestamp: " << timestamp << ", Accel: [" << accel[0] << ", " << accel[1] << ", " << accel[2] << "]"
-              << std::endl;
-    std::cout << "Gyro: [" << gyro[0] << ", " << gyro[1] << ", " << gyro[2] << "]" << std::endl;
-    std::cout << "Quaternion: [" << quaternion[0] << ", " << quaternion[1] << ", " << quaternion[2] << ", "
-              << quaternion[3] << "]" << std::endl;
-  }
+  void read(std::vector<canfd_frame> read_buffer) override;
 };
 
 class RemoteControl : public Peripheral
@@ -108,13 +93,7 @@ public:
   {
   }
 
-  void read(std::vector<canfd_frame> read_buffer) override
-  {
-    std::cout << "Reading data from RemoteControl: " << name << std::endl;
-    std::cout << "Timestamp: " << timestamp << ", Forward: " << forward << ", Roll: " << roll << ", Pitch: " << pitch
-              << ", Yaw: " << yaw << ", Height: " << height << ", Mode: " << mode << ", Speed: " << speed
-              << ", Jump: " << jump << ", Status: " << status << std::endl;
-  }
+  void read(std::vector<canfd_frame> read_buffer) override;
 };
 
 class Board
