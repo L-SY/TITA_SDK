@@ -5,7 +5,7 @@ project(tita_hw)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_definitions(-Wall -Werror -Wno-inconsistent-missing-override)
+#add_definitions(-Wall -Werror -Wno-inconsistent-missing-override)
 set(CATKIN_PACKAGE_DEPENDENCIES
         roscpp
         hardware_interface

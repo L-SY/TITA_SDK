@@ -17,14 +17,15 @@ namespace tita_hw
 class Peripheral
 {
 public:
-  std::string name;
+  std::string name_;
+  bool debug_;
 
-  Peripheral(const std::string& name) : name(name)
-  {
-  }
+  Peripheral(const std::string& name, bool debug = false)
+    : name_(name), debug_(debug)
+  {}
 
   virtual void read(std::vector<canfd_frame> read_buffer) = 0;
-
+  virtual void write(canfd_frame canfd_frame){}
   virtual ~Peripheral() = default;
 };
 
@@ -38,9 +39,9 @@ public:
   float kd;
   float torque;
 
-  Motor(const std::string& name, uint32_t timestamp = 0, float position = 0.0, float kp = 0.0, float velocity = 0.0,
+  Motor(const std::string& name, bool debug = false, uint32_t timestamp = 0, float position = 0.0, float kp = 0.0, float velocity = 0.0,
         float kd = 0.0, float torque = 0.0)
-    : Peripheral(name), timestamp(timestamp), position(position), kp(kp), velocity(velocity), kd(kd), torque(torque)
+    : Peripheral(name,debug), timestamp(timestamp), position(position), kp(kp), velocity(velocity), kd(kd), torque(torque)
   {}
 
   void read(std::vector<canfd_frame> read_buffer) override;
@@ -50,14 +51,16 @@ class IMU : public Peripheral
 {
 public:
   uint32_t timestamp;
-  std::vector<double> accel;
-  std::vector<double> gyro;
-  std::vector<double> quaternion;
+  std::vector<float> accel;
+  std::vector<float> gyro;
+  std::vector<float> quaternion;
+  float temperature;
 
-  IMU(const std::string& name, uint32_t timestamp = 0, const std::vector<double>& accel = { 0.0, 0.0, 0.0 },
-      const std::vector<double>& gyro = { 0.0, 0.0, 0.0 },
-      const std::vector<double>& quaternion = { 0.0, 0.0, 0.0, 0.0 })
-    : Peripheral(name), timestamp(timestamp), accel(accel), gyro(gyro), quaternion(quaternion)
+  IMU(const std::string& name, bool debug = false, uint32_t timestamp = 0, const std::vector<float>& accel = { 0.0, 0.0, 0.0 },
+      const std::vector<float>& gyro = { 0.0, 0.0, 0.0 },
+      const std::vector<float>& quaternion = { 0.0, 0.0, 0.0, 0.0 },
+      const float& temperature = 0)
+    : Peripheral(name,debug), timestamp(timestamp), accel(accel), gyro(gyro), quaternion(quaternion), temperature(temperature)
   {}
 
   void read(std::vector<canfd_frame> read_buffer) override;
@@ -77,9 +80,9 @@ public:
   int jump;
   int status;
 
-  RemoteControl(const std::string& name, uint32_t timestamp = 0, int forward = 0, int roll = 0, int pitch = 0,
+  RemoteControl(const std::string& name, bool debug = false, uint32_t timestamp = 0, int forward = 0, int roll = 0, int pitch = 0,
                 int yaw = 0, int height = 0, int mode = 0, int speed = 0, int jump = 0, int status = 0)
-    : Peripheral(name)
+    : Peripheral(name,debug)
     , timestamp(timestamp)
     , forward(forward)
     , roll(roll)
@@ -99,11 +102,11 @@ public:
 class Board
 {
 public:
-  std::string name;
+  std::string name_;
   int canfd_id;
   std::vector<std::shared_ptr<Peripheral>> peripherals;
 
-  Board(const std::string& name, int canfd_id) : name(name), canfd_id(canfd_id)
+  Board(const std::string& name, int canfd_id) : name_(name), canfd_id(canfd_id)
   {
   }
 
