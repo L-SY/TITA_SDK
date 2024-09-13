@@ -7,7 +7,6 @@
 #include <chrono>
 #include <functional>
 #include "boost/bind/bind.hpp"
-#include "ros/ros.h"
 
 namespace tita_hw
 {

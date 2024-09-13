@@ -1,29 +1,31 @@
-//
-// Created by lsy on 24-8-23.
-//
-
+#include <iostream>
+#include <thread>
+#include <chrono>
+#include <mutex>
 #include "tita_hw/CANBus.h"
 #include "tita_hw/TITA.h"
-#include "ros/ros.h"
-#include "std_msgs/String.h"
 
-int main(int argc, char **argv)
+int main()
 {
-  ros::init(argc, argv, "imu");
-  ros::NodeHandle n;
-  tita_hw::CanBus canBus("can0",95);
+  tita_hw::CanBus canBus("can0", 95);
   tita_hw::IMU imu("imu");
-  ros::Publisher chatter_pub = n.advertise<std_msgs::String>("imu", 1000);
-  ros::Rate loop_rate(10);
-  while (ros::ok())
+
+  const std::chrono::milliseconds interval(100); // 10 Hz
+
+  while (true)
   {
-    std_msgs::String msg;
-    msg.data = "imu";
-    chatter_pub.publish(msg);
-    std::lock_guard<std::mutex> guard(canBus.mutex_);
-    imu.read(canBus.read_buffer_);
-    canBus.read_buffer_.clear();
-    ros::spinOnce();
-    loop_rate.sleep();
+    std::string msg = "imu";
+
+    std::cout << msg << std::endl;
+
+    {
+      std::lock_guard<std::mutex> guard(canBus.mutex_);
+      imu.read(canBus.read_buffer_);
+      canBus.read_buffer_.clear();
+    }
+
+    std::this_thread::sleep_for(interval);
   }
+
+  return 0;
 }
