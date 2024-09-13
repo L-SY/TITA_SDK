@@ -131,7 +131,8 @@ static void* socketcan_receiver_thread(void* argv)
         // Wait until timeout or activity on any descriptor
         if (select(maxfd + 1, &descriptors, nullptr, nullptr, &timeout) > 0)
         {
-            ssize_t len = read(sock->sock_fd_, &rx_frame, CAN_MTU);
+            // The nbtypes should be CANFD_MTU！！！
+            ssize_t len = read(sock->sock_fd_, &rx_frame, CANFD_MTU);
             if (len < 0)
                 continue;
             if (sock->reception_handler != nullptr)
