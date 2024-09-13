@@ -22,15 +22,6 @@ void Motor::read(std::vector<canfd_frame> read_buffer)
 
 void IMU::read(std::vector<canfd_frame> read_buffer)
 {
-  if (debug_)
-  {
-    std::cout << "Reading data from IMU: " << name_ << std::endl;
-    std::cout << "Timestamp: " << timestamp << ", Accel: [" << accel[0] << ", " << accel[1] << ", " << accel[2] << "]"
-              << std::endl;
-    std::cout << "Gyro: [" << gyro[0] << ", " << gyro[1] << ", " << gyro[2] << "]" << std::endl;
-    std::cout << "Quaternion: [" << quaternion[0] << ", " << quaternion[1] << ", " << quaternion[2] << ", "
-              << quaternion[3] << "]" << std::endl;
-  }
   for (const auto& frame_stamp : read_buffer)
   {
     if (frame_stamp.can_id == 0x118 || frame_stamp.can_id == 0x119)
@@ -51,6 +42,7 @@ void IMU::read(std::vector<canfd_frame> read_buffer)
       }
     }
   }
+  std::cout << "IMU read: "<< std::endl;
 }
 
 void RemoteControl::read(std::vector<canfd_frame> read_buffer)
