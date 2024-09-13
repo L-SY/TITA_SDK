@@ -3,6 +3,7 @@
 //
 
 #include "tita_hw/TITA.h"
+#include <iomanip>
 
 namespace tita_hw
 {
@@ -24,8 +25,9 @@ void IMU::read(std::vector<canfd_frame> read_buffer)
 {
   for (const auto& frame_stamp : read_buffer)
   {
-    if (frame_stamp.can_id == 0x118 || frame_stamp.can_id == 0x119)
+    if (frame_stamp.can_id == 0x118)
     {
+      std::cout << std::dec << std::endl; // Reset to decimal for further output
       std::memcpy(&timestamp, frame_stamp.data, sizeof(timestamp));
       std::memcpy(accel.data(), frame_stamp.data + sizeof(timestamp), 3 * sizeof(float));
       std::memcpy(gyro.data(), frame_stamp.data + sizeof(timestamp) + 3 * sizeof(float), 3 * sizeof(float));
@@ -34,6 +36,12 @@ void IMU::read(std::vector<canfd_frame> read_buffer)
 
       if (debug_)
       {
+        // std::cout << "CAN Frame Data: ";
+        // std::cout << "frame_stamp len: " << frame_stamp.len << std::endl;
+        // for (int i = 0; i < frame_stamp.len; ++i)
+        // {
+        //   std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(frame_stamp.data[i]) << " ";
+        // }
         std::cout << "Timestamp: " << timestamp << std::endl;
         std::cout << "Accel: [" << accel[0] << ", " << accel[1] << ", " << accel[2] << "]" << std::endl;
         std::cout << "Gyro: [" << gyro[0] << ", " << gyro[1] << ", " << gyro[2] << "]" << std::endl;
@@ -42,7 +50,6 @@ void IMU::read(std::vector<canfd_frame> read_buffer)
       }
     }
   }
-  std::cout << "IMU read: "<< std::endl;
 }
 
 void RemoteControl::read(std::vector<canfd_frame> read_buffer)

@@ -56,12 +56,13 @@ public:
   std::vector<float> quaternion;
   float temperature;
 
-  IMU(const std::string& name, bool debug = false, uint32_t timestamp = 0, const std::vector<float>& accel = { 0.0, 0.0, 0.0 },
-      const std::vector<float>& gyro = { 0.0, 0.0, 0.0 },
-      const std::vector<float>& quaternion = { 0.0, 0.0, 0.0, 0.0 },
-      const float& temperature = 0)
-    : Peripheral(name,debug), timestamp(timestamp), accel(accel), gyro(gyro), quaternion(quaternion), temperature(temperature)
-  {}
+  IMU(const std::string& name, bool debug = false, uint32_t timestamp = 0)
+    : Peripheral(name,debug), timestamp(timestamp)
+  {
+    accel.resize(3);
+    gyro.resize(3);
+    quaternion.resize(4);
+  }
 
   void read(std::vector<canfd_frame> read_buffer) override;
 };
