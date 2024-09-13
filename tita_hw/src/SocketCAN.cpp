@@ -15,8 +15,7 @@ SocketCAN::~SocketCAN()
         this->close();
 }
 
-bool SocketCAN::open(const std::string& interface, std::function<void(const canfd_frame& frame)> handler,
-                     int thread_priority)
+bool SocketCAN::open(const std::string& interface, boost::function<void(const canfd_frame& frame)> handler, int thread_priority)
 {
     reception_handler = std::move(handler);
     // Request a socket

@@ -7,6 +7,7 @@
 #include <chrono>
 #include <functional>
 #include "boost/bind/bind.hpp"
+using namespace boost::placeholders;
 
 namespace tita_hw
 {
