@@ -6,6 +6,11 @@
 #include <thread>
 #include <string>
 #include <cstdio>  // for std::perror
+#include <linux/can.h>
+#include <linux/can/raw.h>
+#include <net/if.h>
+#include <unistd.h>
+
 
 namespace tita_hw
 {
@@ -36,6 +41,7 @@ bool SocketCAN::open(const std::string& interface, boost::function<void(const ca
         close();
         return false;
     }
+
     // Bind the socket to the network interface
     address_.can_family = AF_CAN;
     address_.can_ifindex = interface_request_.ifr_ifindex;
@@ -44,6 +50,13 @@ bool SocketCAN::open(const std::string& interface, boost::function<void(const ca
     {
         std::cerr << "Failed to bind socket to " << name << " network interface" << std::endl;
         close();
+        return false;
+    }
+
+    // Open canfd mode !!!
+    int enable_canfd = 1;
+    if (setsockopt(sock_fd_, SOL_CAN_RAW, CAN_RAW_FD_FRAMES, &enable_canfd, sizeof(enable_canfd)) < 0) {
+        std::cerr << "Error enabling CANFD support" << std::endl;
         return false;
     }
     // Start a separate, event-driven thread for frame reception

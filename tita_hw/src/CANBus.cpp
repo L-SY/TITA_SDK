@@ -28,7 +28,7 @@ void CanBus::write(canfd_frame* frame)
 
 void CanBus::frameCallback(const canfd_frame& frame)
 {
-  std::lock_guard<std::mutex> guard(mutex_);
+  // std::lock_guard<std::mutex> guard(mutex_);
   read_buffer_.push_back(frame);
 }
 }// namespace tita_hw
