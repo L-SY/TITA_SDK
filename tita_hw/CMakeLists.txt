@@ -19,5 +19,5 @@ file(GLOB_RECURSE sources "src/*.cpp")
 add_library(${PROJECT_NAME} SHARED ${sources})
 target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
 
-add_executable(test_imu test/TestIMU.cpp)
-target_link_libraries(test_imu ${PROJECT_NAME} ${Boost_LIBRARIES})
+add_executable(test_peripheral test/TestPeripheral.cpp)
+target_link_libraries(test_peripheral ${PROJECT_NAME} ${Boost_LIBRARIES})

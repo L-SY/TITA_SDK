@@ -71,29 +71,29 @@ class RemoteControl : public Peripheral
 {
 public:
   uint32_t timestamp;
-  int forward;
-  int roll;
-  int pitch;
-  int yaw;
-  int height;
-  int mode;
-  int speed;
-  int jump;
-  int status;
+  float forward;
+  float yaw;
+  float pitch;
+  float roll;
+  float height;
+  float split;
+  float tilt;
+  float forward_accel;
+  float yaw_accel ;
 
-  RemoteControl(const std::string& name, bool debug = false, uint32_t timestamp = 0, int forward = 0, int roll = 0, int pitch = 0,
-                int yaw = 0, int height = 0, int mode = 0, int speed = 0, int jump = 0, int status = 0)
+  RemoteControl(const std::string& name, bool debug = false, uint32_t timestamp = 0, float forward = 0, float yaw = 0, float pitch = 0,
+                float roll = 0, float height = 0, float split = 0, float tilt = 0, float forward_accel = 0, float yaw_accel = 0)
     : Peripheral(name,debug)
     , timestamp(timestamp)
     , forward(forward)
-    , roll(roll)
-    , pitch(pitch)
     , yaw(yaw)
+    , pitch(pitch)
+    , roll(roll)
     , height(height)
-    , mode(mode)
-    , speed(speed)
-    , jump(jump)
-    , status(status)
+    , split(split)
+    , tilt(tilt)
+    , forward_accel(forward_accel)
+    , yaw_accel(yaw_accel)
   {
   }
 

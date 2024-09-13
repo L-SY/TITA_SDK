@@ -54,12 +54,36 @@ void IMU::read(std::vector<canfd_frame> read_buffer)
 
 void RemoteControl::read(std::vector<canfd_frame> read_buffer)
 {
-  if (debug_)
+  for (const auto& frame_stamp : read_buffer)
+  {
+    if (frame_stamp.can_id == 0x12D)
+    {
+      std::memcpy(&timestamp, frame_stamp.data, sizeof(timestamp));
+      std::memcpy(&forward, frame_stamp.data + sizeof(timestamp), sizeof(forward));
+      std::memcpy(&yaw, frame_stamp.data + sizeof(timestamp) + sizeof(float), sizeof(yaw));
+      std::memcpy(&pitch, frame_stamp.data + sizeof(timestamp) + 2*sizeof(float), sizeof(pitch));
+      std::memcpy(&roll, frame_stamp.data + sizeof(timestamp) + 3*sizeof(float) , sizeof(roll));
+      std::memcpy(&height, frame_stamp.data + sizeof(timestamp) + 4*sizeof(forward) , sizeof(height));
+      std::memcpy(&split, frame_stamp.data + sizeof(timestamp) + 5*sizeof(forward) , sizeof(split));
+      std::memcpy(&tilt, frame_stamp.data + sizeof(timestamp) + 6*sizeof(forward) , sizeof(tilt));
+      std::memcpy(&forward_accel, frame_stamp.data + sizeof(timestamp) + 7*sizeof(forward), sizeof(forward_accel));
+      std::memcpy(&yaw_accel, frame_stamp.data + sizeof(timestamp) + 8*sizeof(forward), sizeof(yaw_accel));
+    }
+  }
+if (debug_)
   {
     std::cout << "Reading data from RemoteControl: " << name_ << std::endl;
-    std::cout << "Timestamp: " << timestamp << ", Forward: " << forward << ", Roll: " << roll << ", Pitch: " << pitch
-              << ", Yaw: " << yaw << ", Height: " << height << ", Mode: " << mode << ", Speed: " << speed
-              << ", Jump: " << jump << ", Status: " << status << std::endl;
+    std::cout << "Timestamp: " << timestamp << std::endl;
+    std::cout << "Forward: " << forward << std::endl;
+    std::cout << "Yaw: " << yaw << std::endl;
+    std::cout << "Pitch: " << pitch << std::endl;
+    std::cout << "Roll: " << roll << std::endl;
+    std::cout << "Height: " << height << std::endl;
+    std::cout << "Split: " << split << std::endl;
+    std::cout << "Tilt: " << tilt << std::endl;
+    std::cout << "Forward_accel: " << forward_accel << std::endl;
+    std::cout << "Yaw_accel: " << yaw_accel << std::endl;
+
   }
 
 }
