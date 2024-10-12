@@ -10,15 +10,57 @@ namespace tita_hw
 
 void Motor::read(std::vector<canfd_frame> read_buffer)
 {
-  if (debug_)
-  {
-    std::cout << "Reading data from Motor: " << name_ << std::endl;
-    std::cout << "Timestamp: " << timestamp << ", Position: " << position << ", KP: " << kp
-              << ", Velocity: " << velocity << ", KD: " << kd << ", Torque: " << torque << std::endl;
-  }
+    int motor_index = -1;
+
+    if (name_ == "motor1")
+      motor_index = 0;
+    else if (name_ == "motor2")
+      motor_index = 1;
+    else if (name_ == "motor3")
+      motor_index = 2;
+    else if (name_ == "motor4")
+      motor_index = 3;
+    else if (name_ == "motor5")
+      motor_index = 4;
+    else if (name_ == "motor6")
+      motor_index = 5;
+    else if (name_ == "motor7")
+      motor_index = 6;
+    else if (name_ == "motor8")
+      motor_index = 7;
+
+    if (motor_index == -1) {
+      std::cerr << "Error: Invalid motor name_." << std::endl;
+      return;
+    }
+
   for (const auto& frame_stamp : read_buffer)
   {
+    if ((motor_index >= 0 && motor_index <= 3 && frame_stamp.can_id == 0x108) ||
+        (motor_index >= 4 && motor_index <= 7 && frame_stamp.can_id == 0x109))
+    {
+      int actual_motor_index = motor_index % 4;  // 每个帧最多有4个motor，所以需要计算在帧中的实际偏移
+
+      std::memcpy(&timestamp, frame_stamp.data + actual_motor_index * (sizeof(uint32_t) + 3 * sizeof(float)), sizeof(uint32_t));
+      std::memcpy(&position, frame_stamp.data + actual_motor_index * (sizeof(uint32_t) + 3 * sizeof(float)) + sizeof(uint32_t), sizeof(float));
+      std::memcpy(&velocity, frame_stamp.data + actual_motor_index * (sizeof(uint32_t) + 3 * sizeof(float)) + sizeof(uint32_t) + sizeof(float), sizeof(float));
+      std::memcpy(&torque, frame_stamp.data + actual_motor_index * (sizeof(uint32_t) + 3 * sizeof(float)) + sizeof(uint32_t) + 2 * sizeof(float), sizeof(float));
+    }
+
+    if (debug_)
+    {
+      std::cout << name_ << " Data: " << std::endl;
+      std::cout << "  Timestamp: " << timestamp << std::endl;
+      std::cout << "  Position: " << position << std::endl;
+      std::cout << "  Velocity: " << velocity << std::endl;
+      std::cout << "  Torque: " << torque << std::endl;
+    }
   }
+}
+
+void Motor::write(canfd_frame canfd_frame)
+{
+  std::cout << name_ << " Data: " << std::endl;
 }
 
 void IMU::read(std::vector<canfd_frame> read_buffer)
@@ -36,12 +78,6 @@ void IMU::read(std::vector<canfd_frame> read_buffer)
 
       if (debug_)
       {
-        // std::cout << "CAN Frame Data: ";
-        // std::cout << "frame_stamp len: " << frame_stamp.len << std::endl;
-        // for (int i = 0; i < frame_stamp.len; ++i)
-        // {
-        //   std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(frame_stamp.data[i]) << " ";
-        // }
         std::cout << "Timestamp: " << timestamp << std::endl;
         std::cout << "Accel: [" << accel[0] << ", " << accel[1] << ", " << accel[2] << "]" << std::endl;
         std::cout << "Gyro: [" << gyro[0] << ", " << gyro[1] << ", " << gyro[2] << "]" << std::endl;

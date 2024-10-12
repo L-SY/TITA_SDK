@@ -24,7 +24,7 @@ public:
     : name_(name), debug_(debug)
   {}
 
-  virtual void read(std::vector<canfd_frame> read_buffer) = 0;
+  virtual void read(std::vector<canfd_frame> read_buffer){}
   virtual void write(canfd_frame canfd_frame){}
   virtual ~Peripheral() = default;
 };
@@ -32,19 +32,33 @@ public:
 class Motor : public Peripheral
 {
 public:
+  // for read
   uint32_t timestamp;
   float position;
-  float kp;
   float velocity;
-  float kd;
   float torque;
 
-  Motor(const std::string& name, bool debug = false, uint32_t timestamp = 0, float position = 0.0, float kp = 0.0, float velocity = 0.0,
-        float kd = 0.0, float torque = 0.0)
-    : Peripheral(name,debug), timestamp(timestamp), position(position), kp(kp), velocity(velocity), kd(kd), torque(torque)
+  // for write
+  uint32_t timestampCmd;
+  float kpCmd;
+  float kdCmd;
+  float torqueCmd;
+  float positionCmd;
+  float velocityCmd;
+
+
+  Motor(const std::string& name, bool debug = false,
+        uint32_t timestamp = 0, float position = 0.0, float velocity = 0.0, float torque = 0.0,
+        uint32_t timestampCmd = 0, float kpCmd = 0.0, float kdCmd = 0.0,
+        float torqueCmd = 0.0, float positionCmd = 0.0, float velocityCmd = 0.0)
+      : Peripheral(name, debug),
+        timestamp(timestamp), position(position), velocity(velocity), torque(torque),
+        timestampCmd(timestampCmd), kpCmd(kpCmd), kdCmd(kdCmd),
+        torqueCmd(torqueCmd), positionCmd(positionCmd), velocityCmd(velocityCmd)
   {}
 
   void read(std::vector<canfd_frame> read_buffer) override;
+  void write(canfd_frame canfd_frame) override;
 };
 
 class IMU : public Peripheral

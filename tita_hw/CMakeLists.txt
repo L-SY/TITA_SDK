@@ -21,3 +21,6 @@ target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
 
 add_executable(test_peripheral test/TestPeripheral.cpp)
 target_link_libraries(test_peripheral ${PROJECT_NAME} ${Boost_LIBRARIES})
+
+add_executable(test_control test/TestControl.cpp)
+target_link_libraries(test_control ${PROJECT_NAME} ${Boost_LIBRARIES})
