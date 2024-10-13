@@ -7,6 +7,49 @@
 
 namespace tita_hw
 {
+void RobotCommand::validateAndClamp()
+{
+    // 使用 std::clamp 简化边界检查
+    forwardVel = std::clamp(forwardVel, 0.0f, 0.25f);
+    yawVel = std::clamp(yawVel, 0.0f, 0.4f);
+    pitchPos = std::clamp(pitchPos, -0.942f, 0.942f);
+    pitchVel = std::clamp(pitchVel, 0.0f, 1.2f);
+    rollPos = std::clamp(rollPos, -0.2f, 0.2f);
+    heightPos = std::clamp(heightPos, 0.11f, 0.375f);
+    heightVel = std::clamp(heightVel, 0.0f, 0.5f);
+}
+
+void RobotCommand::write()
+{
+  validateAndClamp();
+
+  std::memcpy(internalFrame.data, &timestamp, sizeof(timestamp));
+  std::memcpy(internalFrame.data + sizeof(timestamp), &forwardVel, sizeof(forwardVel));
+  std::memcpy(internalFrame.data + sizeof(timestamp) + sizeof(forwardVel), &yawVel, sizeof(yawVel));
+  std::memcpy(internalFrame.data + sizeof(timestamp) + 2 * sizeof(float), &pitchPos, sizeof(pitchPos));
+  std::memcpy(internalFrame.data + sizeof(timestamp) + 3 * sizeof(float), &pitchVel, sizeof(pitchVel));
+  std::memcpy(internalFrame.data + sizeof(timestamp) + 4 * sizeof(float), &rollPos, sizeof(rollPos));
+  std::memcpy(internalFrame.data + sizeof(timestamp) + 5 * sizeof(float), &heightPos, sizeof(heightPos));
+  std::memcpy(internalFrame.data + sizeof(timestamp) + 6 * sizeof(float), &heightVel, sizeof(heightVel));
+  std::memcpy(internalFrame.data + sizeof(timestamp) + 7 * sizeof(float), &forwardAccel, sizeof(forwardAccel));
+  std::memcpy(internalFrame.data + sizeof(timestamp) + 8 * sizeof(float), &yawAccel, sizeof(yawAccel));
+
+  if (debug_)
+  {
+    std::cout << name_ << " Command Sent:" << std::endl;
+    std::cout << "  Timestamp: " << timestamp << std::endl;
+    std::cout << "  Forward Velocity: " << forwardVel << std::endl;
+    std::cout << "  Yaw Velocity: " << yawVel << std::endl;
+    std::cout << "  Pitch Position: " << pitchPos << std::endl;
+    std::cout << "  Pitch Velocity: " << pitchVel << std::endl;
+    std::cout << "  Roll Position: " << rollPos << std::endl;
+    std::cout << "  Height Position: " << heightPos << std::endl;
+    std::cout << "  Height Velocity: " << heightVel << std::endl;
+    std::cout << "  Forward Acceleration: " << forwardAccel << std::endl;
+    std::cout << "  Yaw Acceleration: " << yawAccel << std::endl;
+  }
+}
+
 
 void Motor::read(std::vector<canfd_frame> read_buffer)
 {
@@ -58,8 +101,9 @@ void Motor::read(std::vector<canfd_frame> read_buffer)
   }
 }
 
-void Motor::write(canfd_frame canfd_frame)
+void Motor::write()
 {
+  // TODO(4yang): Add single motor cmd
   std::cout << name_ << " Data: " << std::endl;
 }
 

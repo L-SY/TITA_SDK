@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <algorithm>
 #include "tita_hw/SocketCAN.h"
 #include "tita_hw/CANBus.h"
 
@@ -25,8 +26,43 @@ public:
   {}
 
   virtual void read(std::vector<canfd_frame> read_buffer){}
-  virtual void write(canfd_frame canfd_frame){}
+  virtual void write(){}
   virtual ~Peripheral() = default;
+};
+
+class RobotCommand : public Peripheral
+{
+public:
+  uint32_t timestamp;
+  float forwardVel;
+  float yawVel;
+  float pitchPos;
+  float pitchVel;
+  float rollPos;
+  float heightPos;
+  float heightVel;
+  float split;
+  float tilt;
+  float forwardAccel;
+  float yawAccel;
+  canfd_frame internalFrame;
+
+  RobotCommand(const std::string& name, bool debug = false,
+                         uint32_t timestamp = 0, float forwardVel = 0.0, float yawVel = 0.0,
+                         float pitchPos = 0.0, float pitchVel = 0.0, float rollPos = 0.0,
+                         float heightPos = 0.0, float heightVel = 0.0,
+                         float forwardAccel = 0.0, float yawAccel = 0.0)
+  : Peripheral(name, debug),
+      timestamp(timestamp), forwardVel(forwardVel), yawVel(yawVel),
+      pitchPos(pitchPos), pitchVel(pitchVel), rollPos(rollPos),
+      heightPos(heightPos), heightVel(heightVel),
+      split(0), tilt(0), forwardAccel(forwardAccel), yawAccel(yawAccel)
+  {
+    internalFrame.len = 64;
+  }
+
+  void validateAndClamp(); // 边界检查
+  void write() override;
 };
 
 class Motor : public Peripheral
@@ -46,7 +82,6 @@ public:
   float positionCmd;
   float velocityCmd;
 
-
   Motor(const std::string& name, bool debug = false,
         uint32_t timestamp = 0, float position = 0.0, float velocity = 0.0, float torque = 0.0,
         uint32_t timestampCmd = 0, float kpCmd = 0.0, float kdCmd = 0.0,
@@ -58,7 +93,7 @@ public:
   {}
 
   void read(std::vector<canfd_frame> read_buffer) override;
-  void write(canfd_frame canfd_frame) override;
+  void write() override;
 };
 
 class IMU : public Peripheral
