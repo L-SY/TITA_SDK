@@ -18,6 +18,12 @@ int main()
     std::string msg = "Ready to enter loop";
     std::cout << msg << std::endl;
 
+    tita_hw::RemoteProcedureCall rpc("robot_rpc", true);
+
+    uint32_t timestamp = 0;  // 模拟时间戳
+
+    // rpc.setStandMode(timestamp, 3);  // 3 表示 TRANSFORM_UP 模式
+    // canBus.write(&rpc.internalFrame);
     while (true)
     {
         std::lock_guard<std::mutex> guard(canBus.mutex_);
@@ -25,13 +31,13 @@ int main()
         robotCommand.yawVel = 0.0f;      // 设定偏航速度
         robotCommand.pitchPos = 0.0f;    // 设定俯仰位置
         robotCommand.rollPos = 0.0f;     // 设定滚转位置
-        robotCommand.heightPos = 0.0f;   // 设定高度位置
+        robotCommand.heightPos = 0.2f;   // 设定高度位置
         robotCommand.forwardAccel = 1.0f;  // 设定前进加速度
         robotCommand.yawAccel = 0.8f;      // 设定偏航加速度
 
-        robotCommand.write();
+        //robotCommand.write();
 
-        canBus.write(&robotCommand.internalFrame);
+        //canBus.write(&robotCommand.internalFrame);
 
         // canBus.read_buffer_.clear();
         std::this_thread::sleep_for(interval);

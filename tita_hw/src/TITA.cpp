@@ -7,6 +7,101 @@
 
 namespace tita_hw
 {
+void RemoteProcedureCall::packRequest(uint32_t timestamp, uint16_t call_id, uint32_t value)
+{
+    std::memset(internalFrame.data, 0, sizeof(internalFrame.data));
+
+    std::memcpy(internalFrame.data, &timestamp, sizeof(timestamp));
+
+    std::memcpy(internalFrame.data + sizeof(timestamp), &call_id, sizeof(call_id));
+
+    std::memcpy(internalFrame.data + sizeof(timestamp) + sizeof(call_id), &value, sizeof(value));
+
+    if (debug_) {
+        std::cout << "Request sent - Timestamp: " << timestamp
+                  << ", Call ID: " << call_id
+                  << ", Value: " << value << std::endl;
+    }
+}
+
+void RemoteProcedureCall::getModelInfo(uint32_t timestamp)
+{
+    uint16_t call_id = 0x100;
+    packRequest(timestamp, call_id, 0);
+}
+
+void RemoteProcedureCall::getSerialNumber(uint32_t timestamp)
+{
+    uint16_t call_id = 0x101;
+    packRequest(timestamp, call_id, 0);
+}
+
+void RemoteProcedureCall::setStandMode(uint32_t timestamp, uint32_t mode)
+{
+    uint16_t call_id = 0x202;
+    packRequest(timestamp, call_id, mode);
+}
+
+void RemoteProcedureCall::setReadyNext(uint32_t timestamp, uint32_t nextState)
+{
+    uint16_t call_id = 0x200;
+    packRequest(timestamp, call_id, nextState);
+}
+
+void RemoteProcedureCall::setBoardcast(uint32_t timestamp, uint32_t value)
+{
+    uint16_t call_id = 0x201;
+    packRequest(timestamp, call_id, value);
+}
+
+void RemoteProcedureCall::setInputMode(uint32_t timestamp, uint32_t mode)
+{
+    uint16_t call_id = 0x221;
+    packRequest(timestamp, call_id, mode);
+}
+
+void RemoteProcedureCall::setHeadMode(uint32_t timestamp, uint32_t mode)
+{
+    uint16_t call_id = 0x223;
+    packRequest(timestamp, call_id, mode);
+}
+
+void RemoteProcedureCall::setJumpMode(uint32_t timestamp, uint32_t mode)
+{
+    uint16_t call_id = 0x231;
+    packRequest(timestamp, call_id, mode);
+}
+
+void RemoteProcedureCall::setMotorZero(uint32_t timestamp, uint32_t motorState)
+{
+    uint16_t call_id = 0x280;
+    packRequest(timestamp, call_id, motorState);
+}
+
+void RemoteProcedureCall::receiveResponse(const canfd_frame& frame)
+{
+    unpackResponse(frame);
+}
+
+void RemoteProcedureCall::unpackResponse(const canfd_frame& frame)
+{
+    uint32_t timestamp;
+    uint16_t call_id;
+    uint32_t value;
+
+    std::memcpy(&timestamp, frame.data, sizeof(timestamp));
+
+    std::memcpy(&call_id, frame.data + sizeof(timestamp), sizeof(call_id));
+
+    std::memcpy(&value, frame.data + sizeof(timestamp) + sizeof(call_id), sizeof(value));
+
+    if (debug_) {
+        std::cout << "Response received - Timestamp: " << timestamp
+                  << ", Call ID: " << (call_id >> 4) << ", Args Count: " << (call_id & 0xF)
+                  << ", Value: " << value << std::endl;
+    }
+}
+
 void RobotCommand::validateAndClamp()
 {
     // 使用 std::clamp 简化边界检查

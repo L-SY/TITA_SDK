@@ -30,6 +30,32 @@ public:
   virtual ~Peripheral() = default;
 };
 
+class RemoteProcedureCall : public Peripheral
+{
+public:
+  RemoteProcedureCall(const std::string& name, bool debug = false): Peripheral(name, debug)
+  {
+    internalFrame.len = 10;
+    internalFrame.can_id = 0x170;
+  }
+
+  void getModelInfo(uint32_t timestamp);
+  void getSerialNumber(uint32_t timestamp);
+  void setStandMode(uint32_t timestamp, uint32_t mode);
+  void setReadyNext(uint32_t timestamp, uint32_t nextState);
+  void setBoardcast(uint32_t timestamp, uint32_t value);
+  void setInputMode(uint32_t timestamp, uint32_t mode);
+  void setHeadMode(uint32_t timestamp, uint32_t mode);
+  void setJumpMode(uint32_t timestamp, uint32_t mode);
+  void setMotorZero(uint32_t timestamp, uint32_t motorState);
+
+  void receiveResponse(const canfd_frame& frame);
+  canfd_frame internalFrame;
+private:
+  void packRequest(uint32_t timestamp, uint16_t call_id, uint32_t value);
+  void unpackResponse(const canfd_frame& frame);
+};
+
 class RobotCommand : public Peripheral
 {
 public:
@@ -58,6 +84,7 @@ public:
       heightPos(heightPos), heightVel(heightVel),
       split(0), tilt(0), forwardAccel(forwardAccel), yawAccel(yawAccel)
   {
+    internalFrame.can_id = 0x108;
     internalFrame.len = 64;
   }
 
