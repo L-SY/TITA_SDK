@@ -142,7 +142,13 @@ public:
   {
     for (int i = 0; i < 8; ++i)
     {
-      addPeripheral(std::make_shared<Motor>("Motor" + std::to_string(i + 1)));
+      std::string motor_name;
+      if (i < 4)
+        motor_name = "M-L" + std::to_string(i);
+      else
+        motor_name = "M-R" + std::to_string(i - 4);
+
+      addPeripheral(std::make_shared<Motor>(motor_name));
     }
     addPeripheral(std::make_shared<IMU>("IMU"));
     addPeripheral(std::make_shared<RemoteControl>("RemoteControl"));
