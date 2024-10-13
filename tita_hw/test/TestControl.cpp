@@ -11,19 +11,30 @@
 int main()
 {
     tita_hw::CanBus canBus("can0", 95);
-    // tita_hw::IMU imu("imu",false);
-    tita_hw::RemoteControl rc("rc",true);
+
+    tita_hw::RobotCommand robotCommand("robot_command", true);
+
     const std::chrono::milliseconds interval(100); // 10 Hz
-    std::string msg = "Ready enter loop";
+    std::string msg = "Ready to enter loop";
     std::cout << msg << std::endl;
+
     while (true)
     {
         std::lock_guard<std::mutex> guard(canBus.mutex_);
-        // imu.read(canBus.read_buffer_);
-        rc.read(canBus.read_buffer_);
+        robotCommand.forwardVel = 0.0f;  // 设定前进速度
+        robotCommand.yawVel = 0.0f;      // 设定偏航速度
+        robotCommand.pitchPos = 0.0f;    // 设定俯仰位置
+        robotCommand.rollPos = 0.0f;     // 设定滚转位置
+        robotCommand.heightPos = 0.0f;   // 设定高度位置
+        robotCommand.forwardAccel = 1.0f;  // 设定前进加速度
+        robotCommand.yawAccel = 0.8f;      // 设定偏航加速度
+
+        robotCommand.write();
+
+        canBus.write(&robotCommand.internalFrame);
+
         // canBus.read_buffer_.clear();
         std::this_thread::sleep_for(interval);
     }
-
     return 0;
 }
