@@ -12,21 +12,21 @@ void Motor::read(std::vector<canfd_frame> read_buffer)
 {
     int motor_index = -1;
 
-    if (name_ == "motor1")
+    if (name_ == "M-L0")
       motor_index = 0;
-    else if (name_ == "motor2")
+    else if (name_ == "M-L1")
       motor_index = 1;
-    else if (name_ == "motor3")
+    else if (name_ == "M-L2")
       motor_index = 2;
-    else if (name_ == "motor4")
+    else if (name_ == "M-L3")
       motor_index = 3;
-    else if (name_ == "motor5")
+    else if (name_ == "M-R0")
       motor_index = 4;
-    else if (name_ == "motor6")
+    else if (name_ == "M-R1")
       motor_index = 5;
-    else if (name_ == "motor7")
+    else if (name_ == "M-R2")
       motor_index = 6;
-    else if (name_ == "motor8")
+    else if (name_ == "M-R3")
       motor_index = 7;
 
     if (motor_index == -1) {
