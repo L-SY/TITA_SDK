@@ -1,6 +1,6 @@
 ## TITA_HW
 
-> 利用Ubuntu socket_can[https://docs.kernel.org/networking/can.html]驱动和基于STM32 G0的candleLight FD[https://linux-automation.com/en/products/candlelight-fd.html]方案的usb2canfd实现上位机控制TITA机器人。
+> 利用Ubuntu socket_can[https://docs.kernel.org/networking/can.html]驱动和基于STM32 G0的candleLight FD[https://linux-automation.com/en/products/candlelight-fd.html] 方案的usb2canfd实现上位机控制TITA机器人。
 
 #### 实现功能
 
